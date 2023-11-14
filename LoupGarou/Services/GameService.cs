@@ -15,7 +15,7 @@ namespace LoupGarou.Services
       _loupGarouDbContext = loupGarouDbContext;
     }
 
-    public async Task<string> CreateGame(int numberOfPlayers)
+    public async Task<Game> CreateGame(int numberOfPlayers)
     {
       var game = new Game()
       {
@@ -24,7 +24,7 @@ namespace LoupGarou.Services
       };
       _loupGarouDbContext.Games.Add(game);
       await _loupGarouDbContext.SaveChangesAsync();
-      return game.GameId;
+      return game;
     }
     public async Task<IEnumerable<Game>> GetAllGames()
     {
