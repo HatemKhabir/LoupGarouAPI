@@ -10,10 +10,23 @@ namespace LoupGarou.Controllers
   [ApiController]
   public class GamesController : ControllerBase
   {
+    private readonly int MIN_PLAYERS= 4; //TODO: Move to config
     private readonly IGameService gameService;
+
     public GamesController(IGameService gameService)
     {
       this.gameService = gameService;
+    }
+
+    // POST api/<GamesController>
+    [HttpPost]
+    public async Task<ActionResult<string>> Post([FromBody] int numberOfPlayers)
+    {
+      if(numberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
+      Game game = await gameService.CreateGame(numberOfPlayers);
+      var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+      var getUrl = baseUrl + "/api/Games/" + game.GameId;
+      return Created(getUrl, game);
     }
 
     // GET: api/<GamesController>
@@ -32,16 +45,6 @@ namespace LoupGarou.Controllers
       var game = await gameService.GetGame(id);
       if(game == null) return NotFound();
       return Ok(game);
-    }
-
-    // POST api/<GamesController>
-    [HttpPost]
-    public async Task<ActionResult<string>> Post([FromBody] int numberOfPlayers)
-    {
-      Game game = await gameService.CreateGame(numberOfPlayers);
-      var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-      var getUrl = baseUrl + "/api/Games/" +  game.GameId;
-      return Created( getUrl, game);
     }
 
     // DELETE api/<GamesController>/5

@@ -15,27 +15,37 @@ public class PlayersController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<Player> Post([FromBody] CreatePlayerRequest request)
+  public async Task<ActionResult<Player>> Post([FromBody] CreatePlayerRequest request)
   {
     Player player = await playerService.CreatePlayer(request);
-    return player;
+    
+    if (player == null) return BadRequest();
+
+    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+    var getUrl = baseUrl + "/api/Players/" + player.PlayerId;
+    return Created(getUrl, player);
   }
   [HttpGet]
-  public async Task<IEnumerable<Player>> Get()
+  public async Task<ActionResult<IEnumerable<Player>>> Get()
   {
-    return await playerService.GetAllPlayers();
+    return Ok(await playerService.GetAllPlayers());
   }
 
   [HttpGet("{id}")]
-  public async Task<Player> Get(Guid id)
+  public async Task<ActionResult<Player>> Get(Guid id)
   {
     var player = await playerService.GetPlayer(id);
-    return player;
+    if(player == null) return NotFound();
+    return Ok(player);
   }
 
   [HttpDelete("{id}")]
-  public async Task Delete(Guid id)
+  public async Task<ActionResult> Delete(Guid id)
   {
+    var player = await playerService.GetPlayer(id);
+    if(player == null) return NotFound();
+
     await playerService.DeletePlayer(id);
+    return NoContent();
   }
 }

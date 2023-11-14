@@ -3,6 +3,7 @@ using LoupGarou.Model;
 using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LoupGarou.Services;
 public class PlayerService : IPlayerService
@@ -17,6 +18,11 @@ public class PlayerService : IPlayerService
   }
   public async Task<Player> CreatePlayer(CreatePlayerRequest request)
   {
+    if(request == null || request.PlayerName.IsNullOrEmpty()) return null;
+    
+    var game = await gameService.GetGame(request.GameId);
+    if(game == null) return null;
+
     Player newPlayer = new Player()
     {
       PlayerId = Guid.NewGuid(),
