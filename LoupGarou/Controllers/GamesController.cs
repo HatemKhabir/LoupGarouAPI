@@ -8,15 +8,15 @@ namespace LoupGarou.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class GameController : ControllerBase
+  public class GamesController : ControllerBase
   {
     private readonly IGameService gameService;
-    public GameController(IGameService gameService)
+    public GamesController(IGameService gameService)
     {
       this.gameService = gameService;
     }
 
-    // GET: api/<GameController>
+    // GET: api/<GamesController>
     [HttpGet]
     public async Task<IEnumerable<Game>> Get()
     {
@@ -24,7 +24,7 @@ namespace LoupGarou.Controllers
       return allGame;
     }
 
-    // GET api/<GameController>/5
+    // GET api/<GamesController>/5
     [HttpGet("{id}")]
     public async Task<Game> Get(string id)
     {
@@ -32,7 +32,7 @@ namespace LoupGarou.Controllers
       return game;
     }
 
-    // POST api/<GameController>
+    // POST api/<GamesController>
     [HttpPost]
     public async Task<string> Post([FromBody] int numberOfPlayers)
     {
@@ -40,7 +40,7 @@ namespace LoupGarou.Controllers
       return id;
     }
 
-    // DELETE api/<GameController>/5
+    // DELETE api/<GamesController>/5
     [HttpDelete("{id}")]
     public async Task Delete(string id)
     {

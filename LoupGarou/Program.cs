@@ -13,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 builder.Services.AddDbContext<LoupGarouDbContext>(
     o => o.UseSqlServer( builder.Configuration.GetConnectionString("SqlServer")));
