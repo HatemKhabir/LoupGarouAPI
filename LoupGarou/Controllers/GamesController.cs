@@ -39,22 +39,31 @@ namespace LoupGarou.Controllers
     }
 
     // GET api/<GamesController>/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Game>> Get(string id)
+    [HttpGet("{gameId}")]
+    public async Task<ActionResult<Game>> Get(string gameId)
     {
-      var game = await gameService.GetGame(id);
+      var game = await gameService.GetGame(gameId);
       if(game == null) return NotFound();
       return Ok(game);
     }
 
-    // DELETE api/<GamesController>/5
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(string id)
+    // GET api/<GamesController>/5/players
+    [HttpGet("{gameId}/players")]
+    public async Task<ActionResult<IEnumerable<Player>>> GetGamePlayers(string gameId)
     {
-      var game = await gameService.GetGame(id);
+      var game = await gameService.GetGame(gameId);
+      if (game == null) return NotFound();
+      return Ok(game.Players);
+    }
+
+    // DELETE api/<GamesController>/5
+    [HttpDelete("{gameId}")]
+    public async Task<ActionResult> Delete(string gameId)
+    {
+      var game = await gameService.GetGame(gameId);
       if(game == null) return NotFound();
 
-      await gameService.DeleteGame(id);
+      await gameService.DeleteGame(gameId);
       return NoContent();
     }
   }
