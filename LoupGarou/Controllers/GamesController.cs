@@ -1,4 +1,5 @@
 ﻿using LoupGarou.Model;
+using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,10 +21,10 @@ namespace LoupGarou.Controllers
 
     // POST api/<GamesController>
     [HttpPost]
-    public async Task<ActionResult<string>> Post([FromBody] int numberOfPlayers)
+    public async Task<ActionResult<string>> Post([FromBody] CreateGameRequest request)
     {
-      if(numberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
-      Game game = await gameService.CreateGame(numberOfPlayers);
+      if(request.NumberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
+      Game game = await gameService.CreateGame(request);
       var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
       var getUrl = baseUrl + "/api/Games/" + game.GameId;
       return Created(getUrl, game);

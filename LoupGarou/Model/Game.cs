@@ -5,5 +5,6 @@
     public string GameId { get; set; }
     public int NumberOfPlayers { get; set; }
     public IList<Player> Players { get; set; }
+    public IList<Character> Characters { get; set; }
   }
 }

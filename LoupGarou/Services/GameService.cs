@@ -1,5 +1,6 @@
 ﻿using LoupGarou.Data;
 using LoupGarou.Model;
+using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
@@ -15,12 +16,22 @@ namespace LoupGarou.Services
       _loupGarouDbContext = loupGarouDbContext;
     }
 
-    public async Task<Game> CreateGame(int numberOfPlayers)
+    public async Task<Game> CreateGame(CreateGameRequest request)
     {
+      var gameCharacters = new List<Character>();
+      foreach (Character character  in request.Characters)
+      {
+        gameCharacters.Add(new Character
+        {
+          CharacterID = Guid.NewGuid(),
+          CharacterName = character.CharacterName,
+        });
+      }
       var game = new Game()
       {
         GameId = GetRandomGameId(),
-        NumberOfPlayers = numberOfPlayers
+        NumberOfPlayers = request.NumberOfPlayers,
+        Characters = gameCharacters
       };
       _loupGarouDbContext.Games.Add(game);
       await _loupGarouDbContext.SaveChangesAsync();
@@ -31,6 +42,7 @@ namespace LoupGarou.Services
       var allGames = await _loupGarouDbContext
         .Games
         .Include(g => g.Players)
+        .Include(g => g.Characters)
         .ToListAsync();
       return allGames;
     }
@@ -40,6 +52,7 @@ namespace LoupGarou.Services
       var game = await _loupGarouDbContext
         .Games
         .Include(g => g.Players)
+        .Include(g => g.Characters)
         .FirstOrDefaultAsync(g => g.GameId == id);
       return game;
     }
