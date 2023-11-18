@@ -11,5 +11,6 @@ namespace LoupGarou.Data
 
         public DbSet<Game> Games { get; set; }
         public DbSet<Player> Players { get; set; }
-    }
+        public DbSet<Character> Characters { get; set; }
+  }
 }
