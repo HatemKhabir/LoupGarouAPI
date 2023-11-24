@@ -19,13 +19,17 @@ namespace LoupGarou.Services
         public async Task<Game> CreateGame(CreateGameRequest request)
         {
             var gameCharacters = new List<Character>();
-            foreach (Character character in request.Characters)
+            if (request.Characters == null)
             {
-                gameCharacters.Add(new Character
+
+                foreach (Character character in request.Characters)
                 {
-                    CharacterID = Guid.NewGuid(),
-                    CharacterName = character.CharacterName,
-                });
+                    gameCharacters.Add(new Character
+                    {
+                        CharacterID = Guid.NewGuid(),
+                        CharacterName = character.CharacterName,
+                    });
+                }
             }
             var game = new Game()
             {
