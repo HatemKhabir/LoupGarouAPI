@@ -33,7 +33,7 @@ namespace LoupGarou.Controllers
 
         // GET: api/<GamesController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Game>>> Get()
+        public async Task<ActionResult<IEnumerable<Game>>> GetAll()
         {
             var allGames = await gameService.GetAllGames();
             if (allGames == null) return NoContent();
@@ -42,20 +42,34 @@ namespace LoupGarou.Controllers
 
         // GET api/<GamesController>/5
         [HttpGet("{gameId}")]
-        public async Task<ActionResult<Game>> Get(Guid gameId)
+        public async Task<ActionResult<Game>> GetById(Guid gameId)
         {
             var game = await gameService.GetGame(gameId);
             if (game == null) return NotFound();
             return Ok(game);
         }
+        // GET api/<GamesController>/5
+        [HttpGet("{gameCode}")]
+        public async Task<ActionResult<Game>> GetByCode(string gameCode)
+        {
+            var game = await gameService.GetGameByCode(gameCode);
+            if (game == null) return NotFound();
+            return Ok(game);
+        }
 
-        // GET api/<GamesController>/5/players
-        [HttpGet("{gameId}/players")]
-        public async Task<ActionResult<IEnumerable<Player>>> GetGamePlayers(Guid gameId)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <returns></returns>
+        [HttpPut("{gameId}/TODO")]
+        public async Task<ActionResult<string>> Put(Guid gameId)
         {
             var game = await gameService.GetGame(gameId);
             if (game == null) return NotFound();
-            return Ok(game.Players);
+
+            Game gameUpdated = await gameService.AssignRolesToPlayers();
+            return Ok("This request should assign a role to each one of this game players");
         }
 
         // DELETE api/<GamesController>/5
@@ -67,21 +81,6 @@ namespace LoupGarou.Controllers
 
             await gameService.DeleteGame(gameId);
             return NoContent();
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="gameId"></param>
-        /// <returns></returns>
-        [HttpPut("{gameId}/AssignRoles/TODO")]
-        public async Task<ActionResult<string>> PostAssignRoles(Guid gameId)
-        {
-            var game = await gameService.GetGame(gameId);
-            if (game == null) return NotFound();
-
-            Game gameUpdated = await gameService.AssignRolesToPlayers();
-            return Ok("This request should assign a role to each one of this game players");
         }
 
     }
