@@ -35,7 +35,9 @@ namespace LoupGarou.Services
             {
                 GameId = GetRandomGameId(),
                 NumberOfPlayers = request.NumberOfPlayers,
-                Characters = gameCharacters
+                Characters = gameCharacters,
+                CurrentPhase = "config",
+                Status= "new"
             };
             _loupGarouDbContext.Games.Add(game);
             await _loupGarouDbContext.SaveChangesAsync();
