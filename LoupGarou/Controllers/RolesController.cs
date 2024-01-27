@@ -39,7 +39,7 @@ namespace LoupGarou.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult<string>> Get()
+        public async Task<ActionResult<string>> GetAll()
         {
             var allroles = await roleService.GetAllRoles();
             if (allroles == null) return NoContent();
@@ -50,7 +50,7 @@ namespace LoupGarou.Controllers
         /// TODO
         /// </summary>
         /// <returns></returns>
-        [HttpGet("{gameId}")]
+        [HttpGet("{roleId}")]
         public async Task<ActionResult<Game>> Get(string roleId)
         {
             var role = await roleService.GetRole(roleId);
@@ -62,7 +62,7 @@ namespace LoupGarou.Controllers
         /// TODO
         /// </summary>
         /// <returns></returns>
-        [HttpDelete("{gameId}")]
+        [HttpDelete("{roleId}")]
         public async Task<ActionResult> Delete(string roleId)
         {
             var role = await roleService.GetRole(roleId);
