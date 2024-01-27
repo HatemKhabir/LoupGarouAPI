@@ -33,7 +33,8 @@ namespace LoupGarou.Services
             }
             var game = new Game()
             {
-                GameId = GetRandomGameId(),
+                GameId= Guid.NewGuid(),
+                GameCode = GetRandomGameCode(),
                 NumberOfPlayers = request.NumberOfPlayers,
                 Roles = roles,
                 CurrentPhase = "config",
@@ -53,7 +54,7 @@ namespace LoupGarou.Services
             return allGames;
         }
 
-        public async Task<Game> GetGame(string id)
+        public async Task<Game> GetGame(Guid id)
         {
             var game = await _loupGarouDbContext
               .Games
@@ -62,7 +63,16 @@ namespace LoupGarou.Services
               .FirstOrDefaultAsync(g => g.GameId == id);
             return game;
         }
-        public async Task DeleteGame(string id)
+        public async Task<Game> GetGameByCode(string code)
+        {
+            var game = await _loupGarouDbContext
+              .Games
+              .Include(g => g.Players)
+              .Include(g => g.Roles)
+              .FirstOrDefaultAsync(g => g.GameCode == code);
+            return game;
+        }
+        public async Task DeleteGame(Guid id)
         {
             var game = await _loupGarouDbContext.Games.FindAsync(id);
             _loupGarouDbContext.Games.Remove(game);
@@ -85,7 +95,7 @@ namespace LoupGarou.Services
             await _loupGarouDbContext.SaveChangesAsync();
         }
 
-        private string GetRandomGameId()
+        private string GetRandomGameCode()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -114,5 +124,6 @@ namespace LoupGarou.Services
         {
             return null;
         }
+
     }
 }

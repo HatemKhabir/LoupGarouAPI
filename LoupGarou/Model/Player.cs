@@ -8,6 +8,6 @@
         public bool IsProtected { get; set; } = false;
         public bool IsLover { get; set; } = false;
         public string Status { get; set; } = "alive";
-        public string GameId { get; set; }
+        public Guid GameId { get; set; }
     }
 }

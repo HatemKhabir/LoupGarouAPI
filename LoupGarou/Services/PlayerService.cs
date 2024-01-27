@@ -20,13 +20,13 @@ public class PlayerService : IPlayerService
   {
     if(request == null || request.PlayerName.IsNullOrEmpty()) return null;
     
-    var game = await gameService.GetGame(request.GameId);
+    var game = await gameService.GetGameByCode(request.GameCode);
     if(game == null) return null;
 
     Player newPlayer = new Player()
     {
       PlayerId = Guid.NewGuid(),
-      GameId = request.GameId,
+      GameId = game.GameId,
       Name = request.PlayerName,
       Status="created"
     };

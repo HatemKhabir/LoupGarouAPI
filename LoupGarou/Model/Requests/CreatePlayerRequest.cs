@@ -2,7 +2,7 @@
 {
   public class CreatePlayerRequest
   {
-    public string GameId { get; set; }
+    public string GameCode { get; set; }
     public string PlayerName { get; set; }
   }
 }

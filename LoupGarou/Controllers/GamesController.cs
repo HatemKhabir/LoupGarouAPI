@@ -42,7 +42,7 @@ namespace LoupGarou.Controllers
 
         // GET api/<GamesController>/5
         [HttpGet("{gameId}")]
-        public async Task<ActionResult<Game>> Get(string gameId)
+        public async Task<ActionResult<Game>> Get(Guid gameId)
         {
             var game = await gameService.GetGame(gameId);
             if (game == null) return NotFound();
@@ -51,7 +51,7 @@ namespace LoupGarou.Controllers
 
         // GET api/<GamesController>/5/players
         [HttpGet("{gameId}/players")]
-        public async Task<ActionResult<IEnumerable<Player>>> GetGamePlayers(string gameId)
+        public async Task<ActionResult<IEnumerable<Player>>> GetGamePlayers(Guid gameId)
         {
             var game = await gameService.GetGame(gameId);
             if (game == null) return NotFound();
@@ -60,7 +60,7 @@ namespace LoupGarou.Controllers
 
         // DELETE api/<GamesController>/5
         [HttpDelete("{gameId}")]
-        public async Task<ActionResult> Delete(string gameId)
+        public async Task<ActionResult> Delete(Guid gameId)
         {
             var game = await gameService.GetGame(gameId);
             if (game == null) return NotFound();
@@ -75,7 +75,7 @@ namespace LoupGarou.Controllers
         /// <param name="gameId"></param>
         /// <returns></returns>
         [HttpPut("{gameId}/AssignRoles/TODO")]
-        public async Task<ActionResult<string>> PostAssignRoles(string gameId)
+        public async Task<ActionResult<string>> PostAssignRoles(Guid gameId)
         {
             var game = await gameService.GetGame(gameId);
             if (game == null) return NotFound();

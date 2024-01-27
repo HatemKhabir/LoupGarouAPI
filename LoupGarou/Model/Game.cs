@@ -2,7 +2,8 @@
 {
     public class Game
     {
-        public string GameId { get; set; }
+        public Guid GameId { get; set; }
+        public string GameCode { get; set; }
         public int NumberOfPlayers { get; set; }
         public IList<Player> Players { get; set; }
         public IList<Role> Roles { get; set; }
