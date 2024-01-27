@@ -57,4 +57,14 @@ public class PlayerService : IPlayerService
 
     await gameService.RemovePlayer(player);
   }
+
+    public Task<IEnumerable<Player>> GetGamePlayers(Guid gameId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Game> UpdatePlayer()
+    {
+        throw new NotImplementedException();
+    }
 }
