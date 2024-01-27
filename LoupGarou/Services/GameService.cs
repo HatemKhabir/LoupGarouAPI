@@ -18,16 +18,16 @@ namespace LoupGarou.Services
 
         public async Task<Game> CreateGame(CreateGameRequest request)
         {
-            var gameCharacters = new List<Character>();
-            if (request.Characters == null)
+            var roles = new List<Role>();
+            if (request.Roles == null)
             {
 
-                foreach (Character character in request.Characters)
+                foreach (Role role in request.Roles)
                 {
-                    gameCharacters.Add(new Character
+                    roles.Add(new Role
                     {
-                        CharacterID = Guid.NewGuid(),
-                        CharacterName = character.CharacterName,
+                        RoleId = Guid.NewGuid(),
+                        RoleName = role.RoleName,
                     });
                 }
             }
@@ -35,7 +35,7 @@ namespace LoupGarou.Services
             {
                 GameId = GetRandomGameId(),
                 NumberOfPlayers = request.NumberOfPlayers,
-                Characters = gameCharacters,
+                Roles = roles,
                 CurrentPhase = "config",
                 Status= "new"
             };
@@ -48,7 +48,7 @@ namespace LoupGarou.Services
             var allGames = await _loupGarouDbContext
               .Games
               .Include(g => g.Players)
-              .Include(g => g.Characters)
+              .Include(g => g.Roles)
               .ToListAsync();
             return allGames;
         }
@@ -58,7 +58,7 @@ namespace LoupGarou.Services
             var game = await _loupGarouDbContext
               .Games
               .Include(g => g.Players)
-              .Include(g => g.Characters)
+              .Include(g => g.Roles)
               .FirstOrDefaultAsync(g => g.GameId == id);
             return game;
         }

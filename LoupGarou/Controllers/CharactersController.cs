@@ -9,13 +9,13 @@ namespace LoupGarou.Controllers
 {
     [Route("TODO/api/[controller]")]
     [ApiController]
-    public class CharactersController : ControllerBase
+    public class RolesController : ControllerBase
     {
-        private readonly ICharacterService characterService;
+        private readonly IRoleService roleService;
 
-        public CharactersController(ICharacterService service)
+        public RolesController(IRoleService service)
         {
-            characterService = service;
+            roleService = service;
         }
 
         /// <summary>
@@ -27,11 +27,11 @@ namespace LoupGarou.Controllers
         public async Task<ActionResult<string>> Post([FromBody] string request)
         {
             if (request == null) return BadRequest($"Please send a valid request");
-            Character character = await characterService.CreateCharacter(request);
+            Role role = await roleService.CreateRole(request);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var getUrl = baseUrl + "/api/Characters/" + character.CharacterID;
-            return Ok("This should create a new character (Loup/ witch/ hunter .. ) and returna unique ID");
-            //return Created(getUrl, character);
+            var getUrl = baseUrl + "/api/roles/" + role.RoleId;
+            return Ok("This should create a new role (Loup/ witch/ hunter .. ) and returna unique ID");
+            //return Created(getUrl, role);
         }
 
         /// <summary>
@@ -41,9 +41,9 @@ namespace LoupGarou.Controllers
         [HttpGet]
         public async Task<ActionResult<string>> Get()
         {
-            var allCharacters = await characterService.GetAllCharacters();
-            if (allCharacters == null) return NoContent();
-            return Ok("This should return all characters in the DB");
+            var allroles = await roleService.GetAllRoles();
+            if (allroles == null) return NoContent();
+            return Ok("This should return all roles in the DB");
         }
 
         /// <summary>
@@ -51,11 +51,11 @@ namespace LoupGarou.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("{gameId}")]
-        public async Task<ActionResult<Game>> Get(string characterID)
+        public async Task<ActionResult<Game>> Get(string roleId)
         {
-            var character = await characterService.GetCharacter(characterID);
-            if (character == null) return NotFound();
-            return Ok("This should return the character matching a specified ID (Loup/Salvaddor..)");
+            var role = await roleService.GetRole(roleId);
+            if (role == null) return NotFound();
+            return Ok("This should return the role matching a specified ID (Loup/Salvaddor..)");
         }
 
         /// <summary>
@@ -63,13 +63,13 @@ namespace LoupGarou.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpDelete("{gameId}")]
-        public async Task<ActionResult> Delete(string characterID)
+        public async Task<ActionResult> Delete(string roleId)
         {
-            var character = await characterService.GetCharacter(characterID);
-            if (character == null) return NotFound();
+            var role = await roleService.GetRole(roleId);
+            if (role == null) return NotFound();
 
-            await characterService.Deletecharacter(characterID);
-            return Ok("This should delete a character matching the specified ID");
+            await roleService.DeleteRole(roleId);
+            return Ok("This should delete a role matching the specified ID");
         }
     }
 }

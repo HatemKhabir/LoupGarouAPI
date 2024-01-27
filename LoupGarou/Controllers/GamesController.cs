@@ -81,7 +81,7 @@ namespace LoupGarou.Controllers
             if (game == null) return NotFound();
 
             Game gameUpdated = await gameService.AssignRolesToPlayers();
-            return Ok("This request should assign a character to each one of this game players");
+            return Ok("This request should assign a role to each one of this game players");
         }
 
     }
