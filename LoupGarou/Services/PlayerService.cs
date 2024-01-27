@@ -28,6 +28,7 @@ public class PlayerService : IPlayerService
       PlayerId = Guid.NewGuid(),
       GameId = request.GameId,
       Name = request.PlayerName,
+      Status="created"
     };
     loupGarouDbContext.Players.Add(newPlayer);
     await loupGarouDbContext.SaveChangesAsync();
