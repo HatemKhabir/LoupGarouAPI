@@ -16,29 +16,17 @@ namespace LoupGarou.Services
             _loupGarouDbContext = loupGarouDbContext;
         }
 
-        public async Task<Game> CreateGame(CreateGameRequest request)
+        public async Task<Game> CreateGame()
         {
-            var roles = new List<Role>();
-            if (request.Roles == null)
-            {
 
-                foreach (Role role in request.Roles)
-                {
-                    roles.Add(new Role
-                    {
-                        RoleId = Guid.NewGuid(),
-                        RoleName = role.RoleName,
-                    });
-                }
-            }
             var game = new Game()
             {
-                GameId= Guid.NewGuid(),
+                GameId = Guid.NewGuid(),
                 GameCode = GetRandomGameCode(),
-                NumberOfPlayers = request.NumberOfPlayers,
-                Roles = roles,
+                NumberOfPlayers = 5,
+                Roles = new List<Role>(),
                 CurrentPhase = "config",
-                Status= "new"
+                Status = "new"
             };
             _loupGarouDbContext.Games.Add(game);
             await _loupGarouDbContext.SaveChangesAsync();

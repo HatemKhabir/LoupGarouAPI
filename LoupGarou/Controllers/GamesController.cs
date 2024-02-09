@@ -22,10 +22,10 @@ namespace LoupGarou.Controllers
 
         // POST api/<GamesController>
         [HttpPost]
-        public async Task<ActionResult<string>> Post([FromBody] CreateGameRequest request)
+        public async Task<ActionResult<string>> Post()
         {
-            if (request.NumberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
-            Game game = await gameService.CreateGame(request);
+            //if (request.NumberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
+            Game game = await gameService.CreateGame();
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var getUrl = baseUrl + "/api/Games/" + game.GameId;
             return Created(getUrl, game);
@@ -49,7 +49,7 @@ namespace LoupGarou.Controllers
             return Ok(game);
         }
         // GET api/<GamesController>/5
-        [HttpGet("{gameCode}")]
+        [HttpGet("code/{gameCode}")]
         public async Task<ActionResult<Game>> GetByCode(string gameCode)
         {
             var game = await gameService.GetGameByCode(gameCode);
