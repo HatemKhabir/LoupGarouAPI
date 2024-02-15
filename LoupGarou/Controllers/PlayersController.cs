@@ -19,7 +19,6 @@ public class PlayersController : ControllerBase
     public async Task<ActionResult<Player>> Post([FromBody] CreatePlayerRequest request)
     {
         Player player = await playerService.CreatePlayer(request);
-
         if (player == null) return BadRequest();
 
         var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
@@ -30,15 +29,17 @@ public class PlayersController : ControllerBase
     [HttpGet("players")]
     public async Task<ActionResult<IEnumerable<Player>>> GetAll()
     {
-        return Ok(await playerService.GetAllPlayers());
+        var players = await playerService.GetAllPlayers();
+        if(players == null) return BadRequest();
+        return Ok(players);
     }
 
     [HttpGet("games/{gameId}/players")]
-    public async Task<ActionResult<Player>> GetGamePlayers(Guid gameId)
+    public async Task<ActionResult<IEnumerable<Player>>> GetGamePlayers(Guid gameId)
     {
-        var player = await playerService.GetGamePlayers(gameId);
-        if (player == null) return NotFound();
-        return Ok(player);
+        var players = await playerService.GetGamePlayers(gameId);
+        if (players == null) return NotFound();
+        return Ok(players);
     }
     
     [HttpGet("players/{id}")]

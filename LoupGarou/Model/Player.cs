@@ -9,5 +9,6 @@
         public bool IsLover { get; set; } = false;
         public string Status { get; set; } = "alive";
         public Guid GameId { get; set; }
+        // public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

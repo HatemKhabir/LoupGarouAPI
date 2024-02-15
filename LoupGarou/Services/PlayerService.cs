@@ -1,4 +1,5 @@
-﻿using LoupGarou.Data;
+﻿using Azure.Core;
+using LoupGarou.Data;
 using LoupGarou.Model;
 using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
@@ -18,7 +19,7 @@ public class PlayerService : IPlayerService
   }
   public async Task<Player> CreatePlayer(CreatePlayerRequest request)
   {
-    if(request == null || request.PlayerName.IsNullOrEmpty()) return null;
+    if(request == null || request.PlayerName.IsNullOrEmpty() || request.GameCode.IsNullOrEmpty()) return null;
     
     var game = await gameService.GetGameByCode(request.GameCode);
     if(game == null) return null;
@@ -58,9 +59,12 @@ public class PlayerService : IPlayerService
     await gameService.RemovePlayer(player);
   }
 
-    public Task<IEnumerable<Player>> GetGamePlayers(Guid gameId)
+    public async Task<IEnumerable<Player>> GetGamePlayers(Guid gameId)
     {
-        throw new NotImplementedException();
+        var game = await gameService.GetGame(gameId);
+        if (game == null) return null;
+        return game.Players;
+
     }
 
     public Task<Game> UpdatePlayer()
