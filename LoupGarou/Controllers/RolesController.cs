@@ -2,6 +2,7 @@
 using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -24,9 +25,9 @@ namespace LoupGarou.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<string>> Post([FromBody] string request)
+        public async Task<ActionResult<string>> Post([FromBody] CreateRoleRequest request)
         {
-            if (request == null) return BadRequest($"Please send a valid request");
+            if (request == null || request.RoleName.IsNullOrEmpty()) return BadRequest($"Please send a valid request");
             Role role = await roleService.CreateRole(request);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var getUrl = baseUrl + "/api/roles/" + role.RoleId;
