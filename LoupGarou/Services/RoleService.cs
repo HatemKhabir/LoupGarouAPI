@@ -1,7 +1,5 @@
-﻿using Azure.Core;
-using LoupGarou.Data;
+﻿using LoupGarou.Data;
 using LoupGarou.Model;
-using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,23 +14,39 @@ public class RoleService : IRoleService
     this.loupGarouDbContext = loupGarouDbContext;
   }
 
-    public Task<Role> CreateRole(CreateRoleRequest request)
+    public async Task<Role> CreateRole(CreateRoleRequest request)
     {
-        throw new NotImplementedException();
+        if (request == null || request.RoleName.IsNullOrEmpty()) return null;
+
+        Role newRole = new Role()
+        {
+            RoleId = new Guid(),
+            RoleName= request.RoleName,
+            Description= request.Description,
+            Ability= request.Ability,
+        };
+        loupGarouDbContext.Roles.Add(newRole);
+        await loupGarouDbContext.SaveChangesAsync();
+
+        return newRole;
     }
 
-    public Task DeleteRole(string roleId)
+    public async Task<IEnumerable<Role>> GetAllRoles()
     {
-        throw new NotImplementedException();
+        var allRoles= await loupGarouDbContext.Roles.ToListAsync();
+        return allRoles;
     }
 
-    public Task<IEnumerable<Role>> GetAllRoles()
+    public async Task<Role> GetRole(Guid roleId)
     {
-        throw new NotImplementedException();
+        var role = await loupGarouDbContext.Roles.FindAsync(roleId);
+        return role;
     }
 
-    public Task<Role> GetRole(string roleId)
+    public async Task DeleteRole(Guid roleId)
     {
-        throw new NotImplementedException();
+        var role = await loupGarouDbContext.Roles.FindAsync(roleId);
+        loupGarouDbContext.Roles.Remove(role);
+        await loupGarouDbContext.SaveChangesAsync();
     }
 }

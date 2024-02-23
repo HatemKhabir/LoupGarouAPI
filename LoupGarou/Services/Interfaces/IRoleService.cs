@@ -6,7 +6,7 @@ namespace LoupGarou.Services.Interfaces
     {
         Task<Role> CreateRole(CreateRoleRequest request);
         Task<IEnumerable<Role>> GetAllRoles();
-        Task<Role> GetRole(string roleId);
-        Task DeleteRole(string roleId);
+        Task<Role> GetRole(Guid roleId);
+        Task DeleteRole(Guid roleId);
     }
 }
