@@ -5,7 +5,7 @@ namespace LoupGarou.Services.Interfaces
 {
     public interface IGameService
     {
-        public Task<Game> CreateGame();
+        public Task<Game> CreateGame(CreateGameRequest request);
         public Task<IEnumerable<Game>> GetAllGames();
         public Task<Game> GetGame(Guid id);
         public Task<Game> GetGameByCode(string code);

@@ -16,15 +16,18 @@ namespace LoupGarou.Services
             _loupGarouDbContext = loupGarouDbContext;
         }
 
-        public async Task<Game> CreateGame()
+        public async Task<Game> CreateGame(CreateGameRequest request)
         {
+            var gameRoles = request.GameCards
+                .Where(x=> x.NumberOfCards > 0)
+                .Select(x => x.Role).ToList();
 
             var game = new Game()
             {
                 GameId = Guid.NewGuid(),
                 GameCode = GetRandomGameCode(),
-                NumberOfPlayers = 5,
-                Roles = new List<Role>(),
+                NumberOfPlayers = request.NumberOfPlayers,
+                //Roles = gameRoles,
                 CurrentPhase = "config",
                 Status = "new"
             };

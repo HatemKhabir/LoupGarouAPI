@@ -22,14 +22,17 @@ namespace LoupGarou.Controllers
 
         // POST api/<GamesController>
         [HttpPost]
-        public async Task<ActionResult<string>> Post()
+        public async Task<ActionResult<string>> Post(CreateGameRequest request)
         {
-            //if (request.NumberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
-            Game game = await gameService.CreateGame();
+            if (request.NumberOfPlayers < MIN_PLAYERS) return BadRequest($"You need at least {MIN_PLAYERS} players to start a game");
+            var cardsAreValid = ValidateGameCards(request.GameCards);
+            if (!cardsAreValid) return BadRequest("Cards are not valid, make sure to give a correct combination of cards.");
+            Game game = await gameService.CreateGame(request);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var getUrl = baseUrl + "/api/Games/" + game.GameId;
             return Created(getUrl, game);
         }
+
 
         // GET: api/<GamesController>
         [HttpGet]
@@ -83,5 +86,18 @@ namespace LoupGarou.Controllers
             return NoContent();
         }
 
+        private bool ValidateGameCards(IList<SameRoleCards> gameCards)
+        {
+            //There should be at least 2 types of cards in the game
+            if (gameCards == null || gameCards.Count < 2) return false;
+
+            //Some roles should exist, some roles has a max or min value
+            foreach (var card in gameCards)
+            {
+                if (card == null) return false;  
+            }
+
+            return true;
+        }
     }
 }
