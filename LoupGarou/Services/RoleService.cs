@@ -7,46 +7,60 @@ using Microsoft.IdentityModel.Tokens;
 namespace LoupGarou.Services;
 public class RoleService : IRoleService
 {
-  private readonly LoupGarouDbContext loupGarouDbContext;
+    private readonly LoupGarouDbContext _loupGarouDbContext;
 
-  public RoleService(LoupGarouDbContext loupGarouDbContext)
-  {
-    this.loupGarouDbContext = loupGarouDbContext;
-  }
+    public RoleService(LoupGarouDbContext loupGarouDbContext)
+    {
+        _loupGarouDbContext = loupGarouDbContext;
+    }
 
     public async Task<Role> CreateRole(CreateRoleRequest request)
     {
-        if (request == null || request.RoleName.IsNullOrEmpty()) return null;
+        if (request == null || request.GameId == Guid.Empty || request.CardId == Guid.Empty) return null;
+
+        var game = await GetGameById(request.GameId);
+        if (game == null) return null;
 
         Role newRole = new Role()
         {
-            RoleId = new Guid(),
-            RoleName= request.RoleName,
-            Description= request.Description,
-            Ability= request.Ability,
+            RoleId = Guid.NewGuid(),
+            Game = game,
+            GameId = request.GameId,
+            CardId = request.CardId
         };
-        loupGarouDbContext.Roles.Add(newRole);
-        await loupGarouDbContext.SaveChangesAsync();
+        _loupGarouDbContext.Roles.Add(newRole);
+        await _loupGarouDbContext.SaveChangesAsync();
 
         return newRole;
     }
 
     public async Task<IEnumerable<Role>> GetAllRoles()
     {
-        var allRoles= await loupGarouDbContext.Roles.ToListAsync();
+        var allRoles = await _loupGarouDbContext.Roles.ToListAsync();
         return allRoles;
     }
 
     public async Task<Role> GetRole(Guid roleId)
     {
-        var role = await loupGarouDbContext.Roles.FindAsync(roleId);
+        var role = await _loupGarouDbContext.Roles.FindAsync(roleId);
         return role;
     }
 
     public async Task DeleteRole(Guid roleId)
     {
-        var role = await loupGarouDbContext.Roles.FindAsync(roleId);
-        loupGarouDbContext.Roles.Remove(role);
-        await loupGarouDbContext.SaveChangesAsync();
+        var role = await _loupGarouDbContext.Roles.FindAsync(roleId);
+        _loupGarouDbContext.Roles.Remove(role);
+        await _loupGarouDbContext.SaveChangesAsync();
+    }
+
+    private async Task<Game> GetGameById(Guid gameId)
+    {
+
+        var game = await _loupGarouDbContext
+          .Games
+          .Include(g => g.Players)
+          .Include(g => g.Roles)
+          .FirstOrDefaultAsync(g => g.GameId == gameId);
+        return game;
     }
 }

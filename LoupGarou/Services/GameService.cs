@@ -9,32 +9,67 @@ namespace LoupGarou.Services
 {
     public class GameService : IGameService
     {
+        private readonly int MIN_PLAYERS = 2; //TODO: Move to config
         private readonly LoupGarouDbContext _loupGarouDbContext;
+        private readonly IRoleService roleService;
 
-        public GameService(LoupGarouDbContext loupGarouDbContext)
+        public GameService(LoupGarouDbContext loupGarouDbContext, IRoleService roleService)
         {
             _loupGarouDbContext = loupGarouDbContext;
+            this.roleService = roleService;
         }
 
         public async Task<Game> CreateGame(CreateGameRequest request)
         {
-            var gameRoles = request.GameCards
-                .Where(x=> x.NumberOfCards > 0)
-                .Select(x => x.Role).ToList();
+            if (request.NumberOfPlayers < MIN_PLAYERS) return null;
 
             var game = new Game()
             {
                 GameId = Guid.NewGuid(),
                 GameCode = GetRandomGameCode(),
                 NumberOfPlayers = request.NumberOfPlayers,
-                //Roles = gameRoles,
                 CurrentPhase = "config",
-                Status = "new"
+                Status = "new",
+                Roles = new List<Role>(),
+                Players = new List<Player>(),
+                Votes = new List<Vote>(),
+                Actions = new List<Model.Action>()
             };
+
             _loupGarouDbContext.Games.Add(game);
+            await _loupGarouDbContext.SaveChangesAsync();
+
+
+            var gameCards = ListOfAllCards(request.GameCards);
+
+            if (gameCards != null)
+            {
+                foreach (var card in gameCards)
+                {
+                    //add role to roleService will automotically add it to the Game
+                    var role = await roleService.CreateRole(new CreateRoleRequest
+                    {
+                        GameId = game.GameId,
+                        CardId = card.CardId
+                    });
+                    if (role == null) continue;
+                }
+            }
+
             await _loupGarouDbContext.SaveChangesAsync();
             return game;
         }
+
+        private List<Card>? ListOfAllCards(IList<SameCardsGroup> gameCards)
+        {
+            if (gameCards == null) return null;
+
+            return gameCards
+                .Where(group => group != null && group.NumberOfCards > 0) // Filter out any null groups or groups with no cards
+                .SelectMany(group => Enumerable.Repeat(group.Card, group.NumberOfCards)) // Create a new sequence of cards for each group
+                .ToList(); // Convert the IEnumerable back to a List
+        }
+
         public async Task<IEnumerable<Game>> GetAllGames()
         {
             var allGames = await _loupGarouDbContext

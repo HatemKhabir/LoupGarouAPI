@@ -86,15 +86,15 @@ namespace LoupGarou.Controllers
             return NoContent();
         }
 
-        private bool ValidateGameCards(IList<SameRoleCards> gameCards)
+        private bool ValidateGameCards(IList<SameCardsGroup> gameCards)
         {
             //There should be at least 2 types of cards in the game
             if (gameCards == null || gameCards.Count < 2) return false;
 
-            //Some roles should exist, some roles has a max or min value
-            foreach (var card in gameCards)
+            //Some roles should exist, some roles has a max or min value...
+            foreach (var sameCardsGroup in gameCards)
             {
-                if (card == null) return false;  
+                if (sameCardsGroup.Card == null) return false;  
             }
 
             return true;

@@ -1,4 +1,6 @@
-﻿namespace LoupGarou.Model
+﻿using System.Text.Json.Serialization;
+
+namespace LoupGarou.Model
 {
     public class Player
     {
@@ -10,5 +12,7 @@
         public string Status { get; set; } = "alive";
         public Guid GameId { get; set; }
         // public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [JsonIgnore]
+        public Game Game{ get; set; }
     }
 }

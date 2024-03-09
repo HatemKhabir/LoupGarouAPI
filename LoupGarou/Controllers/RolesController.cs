@@ -22,7 +22,7 @@ namespace LoupGarou.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> Post([FromBody] CreateRoleRequest request)
         {
-            if (request == null || request.RoleName.IsNullOrEmpty()) return BadRequest($"Please send a valid request");
+            if (request == null) return BadRequest($"Please send a valid request");
             Role role = await roleService.CreateRole(request);
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var getUrl = baseUrl + "/api/roles/" + role.RoleId;

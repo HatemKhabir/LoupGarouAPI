@@ -1,8 +1,8 @@
 ﻿namespace LoupGarou.Model
 {
-    public class SameRoleCards
+    public class SameCardsGroup
     {
-        public Role Role { get; set; }
+        public Card Card { get; set; }
         public int NumberOfCards { get; set; }
     }
 }
