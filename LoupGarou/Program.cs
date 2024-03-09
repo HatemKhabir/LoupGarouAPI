@@ -26,6 +26,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 
 builder.Services.AddDbContext<LoupGarouDbContext>(
