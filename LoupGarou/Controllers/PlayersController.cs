@@ -10,14 +10,24 @@ namespace LoupGarou.Controllers;
 public class PlayersController : ControllerBase
 {
     private readonly IPlayerService playerService;
-    public PlayersController(IPlayerService playerService)
+    private readonly IGameService gameService;
+
+    public PlayersController(IPlayerService playerService, IGameService gameService)
     {
         this.playerService = playerService;
+        this.gameService = gameService;
     }
 
     [HttpPost("players")]
     public async Task<ActionResult<Player>> Post([FromBody] CreatePlayerRequest request)
     {
+        if (request == null) return BadRequest("The request didn't reach the server");
+        
+        Game game = await gameService.GetGameByCode(request.GameCode);
+        if (game == null) return NotFound("The game code is not correct");
+
+        if (game.Players.Count == game.NumberOfPlayers) return BadRequest("The game is full");
+
         Player player = await playerService.CreatePlayer(request);
         if (player == null) return BadRequest();
 
