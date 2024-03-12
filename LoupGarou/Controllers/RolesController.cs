@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LoupGarou.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class RolesController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace LoupGarou.Controllers
             roleService = service;
         }
 
-        [HttpPost]
+        [HttpPost("roles")]
         public async Task<ActionResult<string>> Post([FromBody] CreateRoleRequest request)
         {
             if (request == null) return BadRequest($"Please send a valid request");
@@ -30,7 +30,7 @@ namespace LoupGarou.Controllers
             //return Ok(role);
         }
 
-        [HttpGet]
+        [HttpGet("roles")]
         public async Task<ActionResult<string>> GetAll()
         {
             var allroles = await roleService.GetAllRoles();
@@ -38,7 +38,15 @@ namespace LoupGarou.Controllers
             return Ok(allroles);
         }
 
-        [HttpGet("{roleId}")]
+        [HttpGet("games/{gameId}/roles")]
+        public async Task<ActionResult<IEnumerable<Role>>> GetGamePlayers(Guid gameId)
+        {
+            var roles = await roleService.GetGameRoles(gameId);
+            if (roles == null) return NotFound();
+            return Ok(roles);
+        }
+
+        [HttpGet("roles/{roleId}")]
         public async Task<ActionResult<Game>> Get(Guid roleId)
         {
             var role = await roleService.GetRole(roleId);
@@ -46,7 +54,7 @@ namespace LoupGarou.Controllers
             return Ok(role);
         }
 
-        [HttpDelete("{roleId}")]
+        [HttpDelete("roles/{roleId}")]
         public async Task<ActionResult> Delete(Guid roleId)
         {
             var role = await roleService.GetRole(roleId);

@@ -76,6 +76,7 @@ namespace LoupGarou.Services
               .Games
               .Include(g => g.Players)
               .Include(g => g.Roles)
+              .ThenInclude(r => r.Card)
               .ToListAsync();
             return allGames;
         }
@@ -86,6 +87,7 @@ namespace LoupGarou.Services
               .Games
               .Include(g => g.Players)
               .Include(g => g.Roles)
+              .ThenInclude(r => r.Card)
               .FirstOrDefaultAsync(g => g.GameId == id);
             return game;
         }
@@ -95,6 +97,7 @@ namespace LoupGarou.Services
               .Games
               .Include(g => g.Players)
               .Include(g => g.Roles)
+              .ThenInclude(r => r.Card)
               .FirstOrDefaultAsync(g => g.GameCode == code);
             return game;
         }

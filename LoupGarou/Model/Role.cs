@@ -7,6 +7,7 @@ namespace LoupGarou.Model
         public Guid RoleId { get; set; }
         public Guid CardId { get; set; }
         public Guid GameId { get; set; }
+        public Card Card { get; set; }
         [JsonIgnore]
         public Game Game{ get; set; }
     }
