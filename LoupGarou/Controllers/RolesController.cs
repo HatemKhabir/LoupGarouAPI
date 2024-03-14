@@ -39,7 +39,7 @@ namespace LoupGarou.Controllers
         }
 
         [HttpGet("games/{gameId}/roles")]
-        public async Task<ActionResult<IEnumerable<Role>>> GetGamePlayers(Guid gameId)
+        public async Task<ActionResult<IEnumerable<Role>>> GetGameRoles(Guid gameId)
         {
             var roles = await roleService.GetGameRoles(gameId);
             if (roles == null) return NotFound();
