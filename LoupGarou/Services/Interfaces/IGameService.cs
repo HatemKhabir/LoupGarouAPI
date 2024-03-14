@@ -12,6 +12,6 @@ namespace LoupGarou.Services.Interfaces
         public Task DeleteGame(Guid id);
         public Task AddPlayer(Player newPlayer);
         Task RemovePlayer(Player player);
-        Task<Game> AssignRolesToPlayers();
+        Task<Game> AssignRolesToPlayers(Guid gameId);
     }
 }

@@ -60,19 +60,16 @@ namespace LoupGarou.Controllers
             return Ok(game);
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="gameId"></param>
-        /// <returns></returns>
-        [HttpPut("{gameId}/TODO")]
-        public async Task<ActionResult<string>> Put(Guid gameId)
+      
+        [HttpPut("{gameId}")]
+        public async Task<ActionResult<string>> AssignRolesToPlayers(Guid gameId)
         {
+            if (gameId == Guid.Empty) return BadRequest("Game ID is invalid");
             var game = await gameService.GetGame(gameId);
-            if (game == null) return NotFound();
+            if (game == null) return NotFound("Game not found");
 
-            Game gameUpdated = await gameService.AssignRolesToPlayers();
-            return Ok("This request should assign a role to each one of this game players");
+            Game gameUpdated = await gameService.AssignRolesToPlayers(gameId);
+            return Ok(gameUpdated);
         }
 
         // DELETE api/<GamesController>/5

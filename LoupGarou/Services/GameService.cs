@@ -3,6 +3,7 @@ using LoupGarou.Model;
 using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Text;
 
 namespace LoupGarou.Services
@@ -145,14 +146,35 @@ namespace LoupGarou.Services
             return builder.ToString();
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        public Task<Game> AssignRolesToPlayers()
+        public async Task<Game> AssignRolesToPlayers(Guid gameId)
         {
-            return null;
-        }
+            Game game = await GetGame(gameId);
+            List<Role> rolesList = Shuffle(game.Roles.ToList());
+            if (rolesList.Count == game.Players.Count)
+            {
+                for (int i = 0; i < rolesList.Count; i++)
+                {
+                    game.Players[i].RoleId = rolesList[i].RoleId;
+                }
+            }
 
+            _loupGarouDbContext.Entry(game).State = EntityState.Modified;
+            await _loupGarouDbContext.SaveChangesAsync();
+                
+            return game;
+        }
+        private List<Role> Shuffle(List<Role> roles)
+        {
+            Random random = new Random();
+            var list = roles;
+            for (int i = list.Count - 1; i > 1; i--)
+            {
+                int rnd = random.Next(i + 1);
+                Role value = list[rnd];
+                list[rnd] = list[i];
+                list[i] = value;
+            }
+            return list;
+        }
     }
 }
