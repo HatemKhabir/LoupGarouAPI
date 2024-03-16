@@ -62,6 +62,18 @@ public class RoleService : IRoleService
         return role;
     }
 
+    public async Task<Role> GetPlayerRole(Guid playerId)
+    {
+        if (playerId == Guid.Empty) return null;
+
+        Player player = await GetPlayer(playerId);
+        if (player == null) return null;
+
+        var roleId = player.RoleId;
+        Role role = await GetRole(roleId);
+        return role;
+    }
+
     public async Task DeleteRole(Guid roleId)
     {
         var role = await _loupGarouDbContext.Roles.FindAsync(roleId);
@@ -79,5 +91,10 @@ public class RoleService : IRoleService
           .ThenInclude(r => r.Card)
           .FirstOrDefaultAsync(g => g.GameId == gameId);
         return game;
+    }
+    private async Task<Player> GetPlayer(Guid playerId)
+    {
+        var player = await _loupGarouDbContext.Players.FindAsync(playerId);
+        return player;
     }
 }

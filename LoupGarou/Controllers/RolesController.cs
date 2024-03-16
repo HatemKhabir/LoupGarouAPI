@@ -54,6 +54,14 @@ namespace LoupGarou.Controllers
             return Ok(role);
         }
 
+        [HttpGet("players/{playerId}/role")]
+        public async Task<ActionResult<Role>> GetPlayerRole(Guid playerId)
+        {
+            var role = await roleService.GetPlayerRole(playerId);
+            if (role == null) return NotFound("Couldn't get player's role");
+            return Ok(role);
+        }
+
         [HttpDelete("roles/{roleId}")]
         public async Task<ActionResult> Delete(Guid roleId)
         {

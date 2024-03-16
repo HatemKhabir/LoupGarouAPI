@@ -9,5 +9,6 @@ namespace LoupGarou.Services.Interfaces
         Task<IEnumerable<Role>> GetGameRoles(Guid gameId);
         Task<Role> GetRole(Guid roleId);
         Task DeleteRole(Guid roleId);
+        Task<Role> GetPlayerRole(Guid playerId);
     }
 }
