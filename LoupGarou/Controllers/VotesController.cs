@@ -2,12 +2,13 @@
 using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace LoupGarou.Controllers
 {
-    [Route("TODO/api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class VotesController : ControllerBase
     {
@@ -18,51 +19,51 @@ namespace LoupGarou.Controllers
             voteService = service;
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<ActionResult<string>> Post([FromBody] string request)
+
+        [HttpPost("votes")]
+        public async Task<ActionResult<Vote>> Post([FromBody] CreateVoteRequest request)
         {
             if (request == null) return BadRequest($"Please send a valid request");
+            if (request.VoterId == Guid.Empty || request.TargetId == Guid.Empty ) 
+                return BadRequest($"Please specify both the voter and the target");
+            
             Vote vote = await voteService.CreateVote(request);
-            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
-            var getUrl = baseUrl + "/api/roles/" + vote.VoterId;
-            return Ok("This should create a new vote");
-            //return Created(getUrl, role);
+            return vote != null ? Ok(vote) : BadRequest("Error while creating the vote");
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<ActionResult<string>> GetAll()
+        [HttpGet("votes")]
+        public async Task<ActionResult<Vote>> GetAllVote()
         {
-            var allroles = await voteService.GetAllVotes();
-            if (allroles == null) return NoContent();
-            return Ok("This should return all votes in the DB");
+            var allvotes = await voteService.GetAllVotes();
+            if (allvotes == null) return NoContent();
+            return Ok(allvotes);
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("{voteId}")]
-        public async Task<ActionResult<Game>> Get(Guid voteId)
+        [HttpGet("votingSession/{votingSessionId}/votes")]
+        public async Task<ActionResult<Vote>> GetAllSessionVotes(Guid votingSessionId)
         {
-            var role = await voteService.GetVote(voteId);
-            if (role == null) return NotFound();
-            return Ok("This should return the vote");
+            var session= await voteService.GetVotingSession(votingSessionId);
+            if (session == null) return NotFound();
+
+            var sessionVotes= await voteService.GetAllSessionVotes(votingSessionId);
+            if (sessionVotes == null) return NoContent();
+            return Ok(sessionVotes);
+        }
+
+
+        [HttpGet("votes/{voteId}")]
+        public async Task<ActionResult<Vote>> GetVote(Guid voteId)
+        {
+            var vote = await voteService.GetVote(voteId);
+            if (vote == null) return NotFound();
+            return Ok(vote);
         }
 
         /// <summary>
         /// TODO
         /// </summary>
         /// <returns></returns>
-        [HttpDelete("{voteId}")]
+        [HttpDelete("votes/{voteId}")]
         public async Task<ActionResult> Delete(Guid voteId)
         {
             var role = await voteService.GetVote(voteId);
