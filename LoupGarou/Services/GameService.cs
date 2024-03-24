@@ -78,6 +78,8 @@ namespace LoupGarou.Services
               .Include(g => g.Players)
               .Include(g => g.Roles)
               .ThenInclude(r => r.Card)
+              .Include(g => g.VotingSessions)
+              .ThenInclude(s=> s.Votes)
               .ToListAsync();
             return allGames;
         }
@@ -89,6 +91,8 @@ namespace LoupGarou.Services
               .Include(g => g.Players)
               .Include(g => g.Roles)
               .ThenInclude(r => r.Card)
+              .Include(g => g.VotingSessions)
+              .ThenInclude(s => s.Votes)
               .FirstOrDefaultAsync(g => g.GameId == id);
             return game;
         }
@@ -99,6 +103,8 @@ namespace LoupGarou.Services
               .Include(g => g.Players)
               .Include(g => g.Roles)
               .ThenInclude(r => r.Card)
+              .Include(g => g.VotingSessions)
+              .ThenInclude(s => s.Votes)
               .FirstOrDefaultAsync(g => g.GameCode == code);
             return game;
         }

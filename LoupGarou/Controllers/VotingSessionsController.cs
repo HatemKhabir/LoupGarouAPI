@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LoupGarou.Controllers
 {
-    [Route("api")]
+    [Route("api/[controller]")]
     [ApiController]
     public class VotingSessionsController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace LoupGarou.Controllers
         }
 
 
-        [HttpPost("votingSession")]
+        [HttpPost()]
         public async Task<ActionResult<VotingSession>> CreateVotingSession([FromBody] CreateVotingSessionRequest request)
         {
             if (request == null) return BadRequest($"Please send a valid request");
@@ -34,7 +34,7 @@ namespace LoupGarou.Controllers
         }
 
 
-        [HttpGet("votingSession")]
+        [HttpGet()]
         public async Task<ActionResult<string>> GetAllVotingSessions()
         {
             var sessions = await voteService.GetAllVotingSessions();
@@ -42,7 +42,7 @@ namespace LoupGarou.Controllers
             return Ok(sessions);
         }
 
-        [HttpGet("votingSession/{votingSessionId}")]
+        [HttpGet("{votingSessionId}")]
         public async Task<ActionResult<VotingSession>> GetVotingSession(Guid votingSessionId)
         {
             VotingSession session= await voteService.GetVotingSession(votingSessionId);
