@@ -33,7 +33,7 @@ namespace LoupGarou.Services
                 Status = "new",
                 Roles = new List<Role>(),
                 Players = new List<Player>(),
-                Votes = new List<Vote>(),
+                VotingSessions = new List<VotingSession>(),
                 Actions = new List<Model.Action>()
             };
 

@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text.Json.Serialization;
 
 namespace LoupGarou.Model
 {
@@ -7,8 +8,10 @@ namespace LoupGarou.Model
         public Guid VoteId { get; set; }
         public Guid VoterId { get; set; }
         public Guid TargetId { get; set; }
-        public Guid GameId { get; set; }
+        public Guid VotingSessionId { get; set; }
         public DateTime CreatedAt { get; set; }= DateTime.Now;
-        public string Result { get; set; }
+        
+        [JsonIgnore]
+        public VotingSession VotingSession { get; set; }
     }
 }
