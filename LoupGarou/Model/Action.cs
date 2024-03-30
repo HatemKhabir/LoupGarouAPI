@@ -9,4 +9,11 @@
         public string ActionType { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.UtcNow;
     }
+
+    //Salvs protected player1
+    //Wolves voted on player2
+    //Witch refused to revive
+    //witch killed no one
+    //? Player2 is dead
+    //village voted on player1  
 }

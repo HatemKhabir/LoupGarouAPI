@@ -155,7 +155,10 @@ namespace LoupGarou.Services
         public async Task<Game> AssignRolesToPlayers(Guid gameId)
         {
             Game game = await GetGame(gameId);
+            if (game == null) return null;
+
             List<Role> rolesList = Shuffle(game.Roles.ToList());
+            
             if (rolesList.Count == game.Players.Count)
             {
                 for (int i = 0; i < rolesList.Count; i++)

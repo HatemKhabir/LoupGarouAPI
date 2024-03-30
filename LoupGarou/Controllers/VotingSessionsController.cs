@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LoupGarou.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class VotingSessionsController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace LoupGarou.Controllers
         }
 
 
-        [HttpPost()]
+        [HttpPost("VotingSessions")]
         public async Task<ActionResult<VotingSession>> CreateVotingSession([FromBody] CreateVotingSessionRequest request)
         {
             if (request == null) return BadRequest($"Please send a valid request");
@@ -34,7 +34,7 @@ namespace LoupGarou.Controllers
         }
 
 
-        [HttpGet()]
+        [HttpGet("VotingSessions")]
         public async Task<ActionResult<string>> GetAllVotingSessions()
         {
             var sessions = await voteService.GetAllVotingSessions();
@@ -42,11 +42,19 @@ namespace LoupGarou.Controllers
             return Ok(sessions);
         }
 
-        [HttpGet("{votingSessionId}")]
+        [HttpGet("VotingSessions/{votingSessionId}")]
         public async Task<ActionResult<VotingSession>> GetVotingSession(Guid votingSessionId)
         {
-            VotingSession session= await voteService.GetVotingSession(votingSessionId);
-            if (session== null) return NotFound();
+            VotingSession session = await voteService.GetVotingSession(votingSessionId);
+            if (session == null) return NotFound();
+            return Ok(session);
+        }
+
+        [HttpGet("Games/{gameId}/VotingSessions/current")]
+        public async Task<ActionResult<VotingSession>> GetCurrentVotingSessionOfGame(Guid gameId)
+        {
+            VotingSession session = await voteService.GetGameCurrentVotingSession(gameId);
+            if (session == null) return NotFound("There is no active voting session, or there is more than one currently active");
             return Ok(session);
         }
 

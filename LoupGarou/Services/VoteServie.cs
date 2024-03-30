@@ -109,6 +109,15 @@ namespace LoupGarou.Services
             return vote;
         }
 
+        public async Task<VotingSession?> GetGameCurrentVotingSession(Guid gameId)
+        {
+            var sessions = await GetAllVotingSessions();
+            var activeSessions = sessions.Where(s => s.GameId == gameId).Where(s => s.IsCompleted == false);
+            if (activeSessions.Count() == 1) return activeSessions.ToList()[0];
+            if (activeSessions.Count() > 1) return activeSessions.OrderByDescending(s => s.CreatedAt).ToList()[0];
+            return null;
+        }
+
         public Task DeleteVote(Guid voteId)
         {
             throw new NotImplementedException();
