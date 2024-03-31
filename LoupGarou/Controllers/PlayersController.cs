@@ -1,5 +1,6 @@
 ﻿using LoupGarou.Model;
 using LoupGarou.Model.Requests;
+using LoupGarou.Model.ResponseMapper;
 using LoupGarou.Services;
 using LoupGarou.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,8 @@ public class PlayersController : ControllerBase
     {
         var players = await playerService.GetGamePlayers(gameId);
         if (players == null) return NotFound();
-        return Ok(players);
+        var playersResponse = players.Select(p => p.ToPlayerResponse());
+        return Ok(playersResponse);
     }
     
     [HttpGet("players/{id}")]
