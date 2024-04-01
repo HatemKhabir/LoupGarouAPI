@@ -13,10 +13,12 @@ namespace LoupGarou.Controllers
     public class VotesController : ControllerBase
     {
         private readonly IVoteService voteService;
+        private readonly IPlayerService playerService;
 
-        public VotesController(IVoteService service)
+        public VotesController(IVoteService service, IPlayerService playerService)
         {
             voteService = service;
+            this.playerService = playerService;
         }
 
 
@@ -27,6 +29,11 @@ namespace LoupGarou.Controllers
             if (request.VoterId == Guid.Empty || request.TargetId == Guid.Empty ) 
                 return BadRequest($"Please specify both the voter and the target");
             
+            var voter = await playerService.GetPlayer(request.VoterId);
+            var target = await playerService.GetPlayer(request.TargetId);
+            if (voter == null) return BadRequest("The Voter player ID is not correct");
+            if (target == null) return BadRequest("The Target player ID is not correct");
+
             Vote vote = await voteService.CreateVote(request);
             return vote != null ? Ok(vote) : BadRequest("Error while creating the vote");
         }

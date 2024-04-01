@@ -6,6 +6,7 @@ namespace LoupGarou.Model
     {
         public Guid VotingSessionId { get; set; }
         public string VotingSessionType { get; set; } = string.Empty;
+        public int ExpectedVotesCount { get; set; }
         public IList<Vote> Votes{ get; set; } = new List<Vote>();
         public bool IsCompleted { get; set; } = false;
         public Guid Result { get; set; }

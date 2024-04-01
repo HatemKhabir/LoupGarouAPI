@@ -33,6 +33,7 @@ namespace LoupGarou.Services
                 GameId = request.GameId,
                 Game = game,
                 VotingSessionType = request.VotingSessionType,
+                ExpectedVotesCount= request.ExpectedVotesCount,
                 Votes = new List<Vote>(),
                 IsCompleted = false,
                 CreatedAt = DateTime.UtcNow,
@@ -93,7 +94,42 @@ namespace LoupGarou.Services
 
             loupGarouDbContext.Votes.Add(vote);
             await loupGarouDbContext.SaveChangesAsync();
+
+            // Check if this is the last vote
+            if(session.ExpectedVotesCount == session.Votes.Count)
+            {
+                await SetVotingSessionCompleted(session);
+            }
+
             return vote;
+        }
+
+        public async Task SetVotingSessionCompleted(VotingSession session)
+        {
+            if (session == null) return;
+
+            session.UpdatedAt = DateTime.UtcNow;
+            session.IsCompleted = true;
+            session.Result = GetVotesResult(session.Votes);
+
+            loupGarouDbContext.Entry(session).State = EntityState.Modified;
+            await loupGarouDbContext.SaveChangesAsync();
+        }
+
+        private Guid GetVotesResult(IList<Vote> votes)
+        {
+            // TODO: foreach loop is not working correctly
+            Dictionary<Guid, int> results = new Dictionary<Guid, int>();
+            foreach (var vote in votes)
+            {
+                if(results.TryGetValue(vote.TargetId, out int result))
+                    results[vote.TargetId] = result++;
+                else
+                    results.Add(vote.TargetId, 1);
+            }
+            var maxVotes= results.Max(kvp => kvp.Value);
+            var mostVoted = results.FirstOrDefault(kvp => kvp.Value == maxVotes).Key; 
+            return mostVoted;
         }
 
         public async Task<IEnumerable<Vote>> GetAllVotes()

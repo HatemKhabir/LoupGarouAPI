@@ -15,5 +15,6 @@ namespace LoupGarou.Services.Interfaces
         Task<Vote> GetVote(Guid voteId);
         Task DeleteVote(Guid voteId);
         Task<VotingSession> GetGameCurrentVotingSession(Guid gameId);
+        Task SetVotingSessionCompleted(VotingSession session);
     }
 }
