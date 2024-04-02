@@ -118,16 +118,15 @@ namespace LoupGarou.Services
 
         private Guid GetVotesResult(IList<Vote> votes)
         {
-            // TODO: foreach loop is not working correctly
             Dictionary<Guid, int> results = new Dictionary<Guid, int>();
             foreach (var vote in votes)
             {
                 if(results.TryGetValue(vote.TargetId, out int result))
-                    results[vote.TargetId] = result++;
+                    results[vote.TargetId] = ++result;
                 else
                     results.Add(vote.TargetId, 1);
             }
-            var maxVotes= results.Max(kvp => kvp.Value);
+            var maxVotes = results.Values.Max();
             var mostVoted = results.FirstOrDefault(kvp => kvp.Value == maxVotes).Key; 
             return mostVoted;
         }
