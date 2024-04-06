@@ -20,7 +20,6 @@ namespace LoupGarou.Controllers
             this.gameService = gameService;
         }
 
-        // POST api/<GamesController>
         [HttpPost]
         public async Task<ActionResult<string>> Post(CreateGameRequest request)
         {
@@ -34,7 +33,6 @@ namespace LoupGarou.Controllers
         }
 
 
-        // GET: api/<GamesController>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Game>>> GetAll()
         {
@@ -43,7 +41,6 @@ namespace LoupGarou.Controllers
             return Ok(allGames);
         }
 
-        // GET api/<GamesController>/5
         [HttpGet("{gameId}")]
         public async Task<ActionResult<Game>> GetById(Guid gameId)
         {
@@ -51,7 +48,6 @@ namespace LoupGarou.Controllers
             if (game == null) return NotFound();
             return Ok(game);
         }
-        // GET api/<GamesController>/5
         [HttpGet("code/{gameCode}")]
         public async Task<ActionResult<Game>> GetByCode(string gameCode)
         {
@@ -72,7 +68,6 @@ namespace LoupGarou.Controllers
             return Ok(gameUpdated);
         }
 
-        // DELETE api/<GamesController>/5
         [HttpDelete("{gameId}")]
         public async Task<ActionResult> Delete(Guid gameId)
         {
@@ -80,6 +75,13 @@ namespace LoupGarou.Controllers
             if (game == null) return NotFound();
 
             await gameService.DeleteGame(gameId);
+            return NoContent();
+        }
+        
+        [HttpDelete("all")]
+        public async Task<ActionResult> DeleteAllGames()
+        {
+            await gameService.DeleteAllGames();
             return NoContent();
         }
 

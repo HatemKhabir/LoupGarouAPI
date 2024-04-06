@@ -61,16 +61,6 @@ namespace LoupGarou.Services
             return game;
         }
 
-        private List<Card>? ListOfAllCards(IList<SameCardsGroup> gameCards)
-        {
-            if (gameCards == null) return null;
-
-            return gameCards
-                .Where(group => group != null && group.NumberOfCards > 0) // Filter out any null groups or groups with no cards
-                .SelectMany(group => Enumerable.Repeat(group.Card, group.NumberOfCards)) // Create a new sequence of cards for each group
-                .ToList(); // Convert the IEnumerable back to a List
-        }
-
         public async Task<IEnumerable<Game>> GetAllGames()
         {
             var allGames = await _loupGarouDbContext
@@ -96,6 +86,7 @@ namespace LoupGarou.Services
               .FirstOrDefaultAsync(g => g.GameId == id);
             return game;
         }
+
         public async Task<Game> GetGameByCode(string code)
         {
             var game = await _loupGarouDbContext
@@ -108,6 +99,7 @@ namespace LoupGarou.Services
               .FirstOrDefaultAsync(g => g.GameCode == code);
             return game;
         }
+        
         public async Task DeleteGame(Guid id)
         {
             var game = await _loupGarouDbContext.Games.FindAsync(id);
@@ -115,43 +107,16 @@ namespace LoupGarou.Services
             await _loupGarouDbContext.SaveChangesAsync();
         }
 
-        public async Task AddPlayer(Player newPlayer)
+        public async Task DeleteAllGames()
         {
-            var game = await GetGame(newPlayer.GameId);
-            game.Players.Add(newPlayer);
-            _loupGarouDbContext.Games.Update(game);
-            await _loupGarouDbContext.SaveChangesAsync();
-        }
-
-        public async Task RemovePlayer(Player player)
-        {
-            var game = await GetGame(player.GameId);
-            game.Players.Remove(player);
-            _loupGarouDbContext.Games.Update(game);
-            await _loupGarouDbContext.SaveChangesAsync();
-        }
-
-        private string GetRandomGameCode()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-            // Create a random number generator
-            Random random = new Random();
-
-            // Create a string builder to store the result
-            StringBuilder builder = new StringBuilder(4);
-
-            // Loop for the number of characters
-            for (int i = 0; i < 4; i++)
+            var allGames = await GetAllGames();
+            foreach (var game in allGames)
             {
-                // Append a random character from the chars string
-                builder.Append(chars[random.Next(chars.Length)]);
+                _loupGarouDbContext.Games.Remove(game);
             }
-
-            // Return the random string
-            return builder.ToString();
+            await _loupGarouDbContext.SaveChangesAsync();
         }
-
+        
         public async Task<Game> AssignRolesToPlayers(Guid gameId)
         {
             Game game = await GetGame(gameId);
@@ -172,6 +137,54 @@ namespace LoupGarou.Services
                 
             return game;
         }
+        
+        public async Task AddPlayer(Player newPlayer)
+        {
+            var game = await GetGame(newPlayer.GameId);
+            game.Players.Add(newPlayer);
+            _loupGarouDbContext.Games.Update(game);
+            await _loupGarouDbContext.SaveChangesAsync();
+        }
+
+        public async Task RemovePlayer(Player player)
+        {
+            var game = await GetGame(player.GameId);
+            game.Players.Remove(player);
+            _loupGarouDbContext.Games.Update(game);
+            await _loupGarouDbContext.SaveChangesAsync();
+        }
+
+
+        #region Helper Methods
+        private string GetRandomGameCode()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            // Create a random number generator
+            Random random = new Random();
+
+            // Create a string builder to store the result
+            StringBuilder builder = new StringBuilder(4);
+
+            // Loop for the number of characters
+            for (int i = 0; i < 4; i++)
+            {
+                // Append a random character from the chars string
+                builder.Append(chars[random.Next(chars.Length)]);
+            }
+
+            // Return the random string
+            return builder.ToString();
+        }
+        private List<Card>? ListOfAllCards(IList<SameCardsGroup> gameCards)
+        {
+            if (gameCards == null) return null;
+
+            return gameCards
+                .Where(group => group != null && group.NumberOfCards > 0) // Filter out any null groups or groups with no cards
+                .SelectMany(group => Enumerable.Repeat(group.Card, group.NumberOfCards)) // Create a new sequence of cards for each group
+                .ToList(); // Convert the IEnumerable back to a List
+        }
         private List<Role> Shuffle(List<Role> roles)
         {
             Random random = new Random();
@@ -185,5 +198,9 @@ namespace LoupGarou.Services
             }
             return list;
         }
+
+
+        #endregion
+
     }
 }
