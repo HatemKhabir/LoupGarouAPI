@@ -1,8 +1,8 @@
 using LoupGarou.Data;
 using Microsoft.EntityFrameworkCore;
-using LoupGarou.Controllers;
 using LoupGarou.Services.Interfaces;
 using LoupGarou.Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +22,12 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
@@ -36,11 +41,15 @@ builder.Services.AddDbContext<LoupGarouDbContext>(
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SerializeAsV2 = true;
+});
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoupGarou API V1");
+    c.RoutePrefix = string.Empty;
+});
 
 app.UseCors("MyAllowedOrigins");
 

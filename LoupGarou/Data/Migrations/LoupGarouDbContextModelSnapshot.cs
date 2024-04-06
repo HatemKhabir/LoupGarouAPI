@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LoupGarou.Data.Migrations
+namespace LoupGarou.Migrations
 {
     [DbContext(typeof(LoupGarouDbContext))]
     partial class LoupGarouDbContextModelSnapshot : ModelSnapshot

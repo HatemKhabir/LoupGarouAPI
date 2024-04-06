@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LoupGarou.Data.Migrations
+namespace LoupGarou.Migrations
 {
     [DbContext(typeof(LoupGarouDbContext))]
-    [Migration("20240221153618_UpdateDbIfNotUpdated")]
-    partial class UpdateDbIfNotUpdated
+    [Migration("20240406053757_CreateDbMigration")]
+    partial class CreateDbMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,11 +58,37 @@ namespace LoupGarou.Data.Migrations
                     b.ToTable("Actions");
                 });
 
+            modelBuilder.Entity("LoupGarou.Model.Card", b =>
+                {
+                    b.Property<Guid>("CardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CardName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CardId");
+
+                    b.ToTable("Cards");
+                });
+
             modelBuilder.Entity("LoupGarou.Model.Game", b =>
                 {
                     b.Property<Guid>("GameId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("CurrentPhase")
                         .IsRequired()
@@ -123,22 +149,15 @@ namespace LoupGarou.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Ability")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("GameId")
+                    b.Property<Guid>("CardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("RoleId");
+
+                    b.HasIndex("CardId");
 
                     b.HasIndex("GameId");
 
@@ -154,24 +173,55 @@ namespace LoupGarou.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Result")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("TargetId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("VoterId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("VotingSessionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("VoteId");
+
+                    b.HasIndex("VotingSessionId");
+
+                    b.ToTable("Votes");
+                });
+
+            modelBuilder.Entity("LoupGarou.Model.VotingSession", b =>
+                {
+                    b.Property<Guid>("VotingSessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExpectedVotesCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("Result")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VotingSessionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VotingSessionId");
 
                     b.HasIndex("GameId");
 
-                    b.ToTable("Votes");
+                    b.ToTable("VotingSessions");
                 });
 
             modelBuilder.Entity("LoupGarou.Model.Action", b =>
@@ -183,27 +233,54 @@ namespace LoupGarou.Data.Migrations
 
             modelBuilder.Entity("LoupGarou.Model.Player", b =>
                 {
-                    b.HasOne("LoupGarou.Model.Game", null)
+                    b.HasOne("LoupGarou.Model.Game", "Game")
                         .WithMany("Players")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("LoupGarou.Model.Role", b =>
                 {
-                    b.HasOne("LoupGarou.Model.Game", null)
+                    b.HasOne("LoupGarou.Model.Card", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LoupGarou.Model.Game", "Game")
                         .WithMany("Roles")
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("LoupGarou.Model.Vote", b =>
                 {
-                    b.HasOne("LoupGarou.Model.Game", null)
+                    b.HasOne("LoupGarou.Model.VotingSession", "VotingSession")
                         .WithMany("Votes")
+                        .HasForeignKey("VotingSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VotingSession");
+                });
+
+            modelBuilder.Entity("LoupGarou.Model.VotingSession", b =>
+                {
+                    b.HasOne("LoupGarou.Model.Game", "Game")
+                        .WithMany("VotingSessions")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("LoupGarou.Model.Game", b =>
@@ -214,6 +291,11 @@ namespace LoupGarou.Data.Migrations
 
                     b.Navigation("Roles");
 
+                    b.Navigation("VotingSessions");
+                });
+
+            modelBuilder.Entity("LoupGarou.Model.VotingSession", b =>
+                {
                     b.Navigation("Votes");
                 });
 #pragma warning restore 612, 618
