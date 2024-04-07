@@ -2,6 +2,7 @@
 using LoupGarou.Model;
 using LoupGarou.Model.Requests;
 using LoupGarou.Services.Interfaces;
+using LoupGarou.Utils;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Text;
@@ -29,7 +30,7 @@ namespace LoupGarou.Services
                 GameId = Guid.NewGuid(),
                 GameCode = GetRandomGameCode(),
                 NumberOfPlayers = request.NumberOfPlayers,
-                CurrentPhase = "config",
+                CurrentPhase = GameConstants.JOIN_LOBBY,
                 Status = "new",
                 Roles = new List<Role>(),
                 Players = new List<Player>(),
@@ -121,21 +122,21 @@ namespace LoupGarou.Services
         {
             Game game = await GetGame(gameId);
             if (game == null) return null;
-
-            List<Role> rolesList = Shuffle(game.Roles.ToList());
             
-            if (rolesList.Count == game.Players.Count)
+            if (game.Roles.Count == game.Players.Count)
             {
+                List<Role> rolesList = Shuffle(game.Roles.ToList());
+                
                 for (int i = 0; i < rolesList.Count; i++)
                 {
                     game.Players[i].RoleId = rolesList[i].RoleId;
                 }
+                game.CurrentPhase = GameConstants.ASSIGN_ROLES;
+                _loupGarouDbContext.Entry(game).State = EntityState.Modified;
+                await _loupGarouDbContext.SaveChangesAsync();
+                return game;
             }
-
-            _loupGarouDbContext.Entry(game).State = EntityState.Modified;
-            await _loupGarouDbContext.SaveChangesAsync();
-                
-            return game;
+            return null;
         }
         
         public async Task AddPlayer(Player newPlayer)

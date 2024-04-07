@@ -13,4 +13,7 @@
         public IList<Action> Actions{ get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
+
+    // game currentPhase : join-lobby , assign-roles, cheif-vote, close-eyes, protector, wolves..
+    // game status: new, started, finished
 }

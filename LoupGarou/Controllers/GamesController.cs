@@ -65,7 +65,9 @@ namespace LoupGarou.Controllers
             if (game == null) return NotFound("Game not found");
 
             Game gameUpdated = await gameService.AssignRolesToPlayers(gameId);
-            return Ok(gameUpdated);
+            return gameUpdated != null ? 
+                        Ok(gameUpdated) : 
+                        BadRequest("An error occured. Please make sure the number of players matches the number of cards");
         }
 
         [HttpDelete("{gameId}")]
