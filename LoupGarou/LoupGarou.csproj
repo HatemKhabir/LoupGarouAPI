@@ -24,6 +24,11 @@
 
 	<ItemGroup>
 		<Folder Include="Data\Migrations\" />
+		<!--<Compile Include="Program.cs" />-->
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="TestLoupGarou" />
 	</ItemGroup>
 
 </Project>

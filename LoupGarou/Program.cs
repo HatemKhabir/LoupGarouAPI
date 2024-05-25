@@ -36,7 +36,8 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IVoteService, VoteServie>();
 
 builder.Services.AddDbContext<LoupGarouDbContext>(
-    o => o.UseSqlServer( builder.Configuration.GetConnectionString("SqlServer")));
+    o => o.UseSqlServer( builder
+    .Configuration.GetConnectionString("SqlServer")));
 
 var app = builder.Build();
 
