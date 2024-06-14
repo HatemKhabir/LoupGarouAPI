@@ -67,8 +67,25 @@ public class PlayerService : IPlayerService
 
     }
 
-    public Task<Game> UpdatePlayer()
+    public async Task<Player> UpdatePlayer(Guid id,UpdatePlayerRequest updatedPlayer)
     {
-        throw new NotImplementedException();
-    }
+        var player = await GetPlayer(id);
+        if (player==null) 
+            return null;
+        if (updatedPlayer.IsProtected!=null)
+        {
+            player.IsProtected = updatedPlayer.IsProtected;
+        }
+		if (updatedPlayer.IsDead != null)
+		{
+			player.IsDead = updatedPlayer.IsDead;
+		}
+		if (updatedPlayer.IsLover != null)
+		{
+			player.IsLover = updatedPlayer.IsLover;
+		}
+        loupGarouDbContext.Players.Update(player);
+        await loupGarouDbContext.SaveChangesAsync();
+        return player;
+	}
 }

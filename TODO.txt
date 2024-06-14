@@ -1,0 +1,8 @@
+ActionController
+how to know when salva votes on first time , that it was salva that voted on the end of day 
+voting result chief
+player ready in player model
+iscompleted and count votes
+assigning roles is always witch ?
+the gameid is still there same game even creating new game overrides the old one 
+we can add the check if there is a game in progress as well ot join it as a host again if it's not completed

@@ -66,13 +66,9 @@ public class PlayersController : ControllerBase
     /// <param name="gameId"></param>
     /// <returns></returns>
     [HttpPut("players/{playerId}/TODO")]
-    public async Task<ActionResult<string>> Put(Guid playerId)
+    public async Task<Player> Put(Guid playerId)
     {
-        var player= await playerService.GetPlayer(playerId);
-        if (player == null) return NotFound();
-
-        Game playerUpdated = await playerService.UpdatePlayer();
-        return Ok("This request should the player state");
+        throw new NotImplementedException();
     }
 
     [HttpDelete("players/{id}")]

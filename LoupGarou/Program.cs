@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
+builder.Logging.AddConsole();
+builder.Logging.AddDebug(); 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyAllowedOrigins",
@@ -30,6 +31,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IActionService, ActionService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IRoleService, RoleService>();

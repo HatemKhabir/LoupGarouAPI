@@ -7,12 +7,13 @@ namespace LoupGarou.Model
         public Guid PlayerId { get; set; }
         public string Name { get; set; }
         public Guid RoleId { get; set; }
-        public bool IsProtected { get; set; } = false;
-        public bool IsLover { get; set; } = false;
-        public string Status { get; set; } = "alive";
-        public Guid GameId { get; set; }
+		public bool? IsProtected { get; set; } = false;
+		public bool? IsLover { get; set; } = false;
+		public bool? IsDead { get; set; } = false;
+		public string Status { get; set; } = "alive";
+		public Guid GameId { get; set; }
         // public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         [JsonIgnore]
-        public Game Game{ get; set; }
+		public Game Game { get; set; }
     }
 }

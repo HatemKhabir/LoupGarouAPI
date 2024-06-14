@@ -4,7 +4,6 @@ using LoupGarou.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LoupGarou.Migrations
 {
     [DbContext(typeof(LoupGarouDbContext))]
-    [Migration("20240406053757_CreateDbMigration")]
-    partial class CreateDbMigration
+    partial class LoupGarouDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,19 +28,14 @@ namespace LoupGarou.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ActionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ActionType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("GameId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("PlayerId")
                         .HasColumnType("uniqueidentifier");
@@ -119,10 +111,13 @@ namespace LoupGarou.Migrations
                     b.Property<Guid>("GameId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsLover")
+                    b.Property<bool?>("IsDead")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsProtected")
+                    b.Property<bool?>("IsLover")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsProtected")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")

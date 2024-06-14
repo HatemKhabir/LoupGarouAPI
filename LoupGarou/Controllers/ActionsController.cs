@@ -1,6 +1,8 @@
 ﻿using LoupGarou.Model;
 using LoupGarou.Model.Requests;
+using LoupGarou.Services;
 using LoupGarou.Services.Interfaces;
+using LoupGarou.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Action = LoupGarou.Model.Action;
 
@@ -8,30 +10,52 @@ using Action = LoupGarou.Model.Action;
 
 namespace LoupGarou.Controllers
 {
-    [Route("TODO/api/[controller]")]
+    [Route("/api/[controller]")]
     [ApiController]
     public class ActionsController : ControllerBase
     {
         private readonly IActionService _actionService;
-
-        public ActionsController(IActionService service)
+        private readonly IPlayerService _playerService;
+        private ILogger<ActionsController> logger;
+        public ActionsController(IActionService service, IPlayerService playerService,ILogger<ActionsController> logger)
         {
             _actionService = service;
+            _playerService = playerService;
+            this.logger = logger;
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+   
         [HttpPost]
-        public async Task<ActionResult<string>> Post([FromBody] string request)
+        public async Task<ActionResult<string>> Post([FromBody] CreateActionRequest request)
         {
             if (request == null) return BadRequest($"Please send a valid request");
-            Action action= await _actionService.CreateAction(request);
-            var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
+            if (request.PlayerId == null || request.TargetId == null)
+                return BadRequest("Please Specify Your or the TargetId !");
+            var voter = await _playerService.GetPlayer(request.PlayerId);
+            var target = await _playerService.GetPlayer(request.TargetId);
+			if (voter == null) return BadRequest("The Voter player ID is not correct");
+			if (target == null) return BadRequest("The Target player ID is not correct");
+            switch (request.ActionType)
+            {case Actions.Kill:
+                    var updatedPlayer =await _playerService.UpdatePlayer(request.TargetId, new UpdatePlayerRequest { IsDead = true });
+                    logger.LogInformation("Updated player object", updatedPlayer);
+                    break;
+             case Actions.Revive:
+					updatedPlayer = await _playerService.UpdatePlayer(request.TargetId, new UpdatePlayerRequest { IsDead = false });
+					logger.LogInformation("Updated player object", updatedPlayer);
+
+					break;
+            case Actions.Protect:
+					updatedPlayer=await _playerService.UpdatePlayer(request.TargetId, new UpdatePlayerRequest { IsProtected = true });
+					logger.LogInformation("Updated player object", updatedPlayer);
+
+					break;
+			}
+			Action action = await _actionService.CreateAction(request);
+			logger.LogInformation("Created action", action);
+			var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}";
             var getUrl = baseUrl + "/api/actions/" + action.ActionId;
-            return Ok("This should create a new Action");
+            return Ok(action);
             //return Created(getUrl, role);
         }
 
@@ -44,7 +68,7 @@ namespace LoupGarou.Controllers
         {
             var allroles = await _actionService.GetAllActions();
             if (allroles == null) return NoContent();
-            return Ok("This should return all Actions in the DB");
+            return Ok(allroles);
         }
 
         /// <summary>

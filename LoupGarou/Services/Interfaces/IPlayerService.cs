@@ -9,7 +9,7 @@ namespace LoupGarou.Services.Interfaces
         public Task<IEnumerable<Player>> GetAllPlayers();
         public Task<IEnumerable<Player>> GetGamePlayers(Guid gameId);
         public Task<Player> GetPlayer(Guid id);
-        public Task<Game> UpdatePlayer(); //TODO
+        public Task<Player> UpdatePlayer(Guid id,UpdatePlayerRequest request); 
         public Task DeletePlayer(Guid id);
     }
 }
